@@ -7,8 +7,11 @@ const cors = require('cors'); // importar cors
 // crear (o inicializar) el servidor de express
 const app = express();
 
-// configurar CORS
+// configurar CORS (sirve para permitir que el servidor reciba peticiones desde otros dominios)
 app.use(cors());
+
+// lectura y parseo del body (sirve para leer los datos que se envian en el body de la peticion)
+app.use(express.json());
 
 // base de datos
 dbConnection();
@@ -19,9 +22,7 @@ app.listen(process.env.PORT, () => {
 });
 
 // rutas
-app.get('/', (request, response) => {
-	response.json({
-		ok: true,
-		mensaje: 'Hola mundo'
-	});
-});
+// middleware para cuando se haga una peticion a la ruta /api/usuarios se use el router de usuarios
+app.use('/api/usuarios', require('./routes/usuarios'));
+
+app.use('/api/login', require('./routes/auth'));

@@ -12,6 +12,4 @@ const dbConnection = async () => {
 }
 
 // Exportar la funcion de conexion
-module.exports = {
-	dbConnection
-};
+module.exports = { dbConnection };
