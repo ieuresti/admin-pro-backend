@@ -3,14 +3,26 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('../helpers/jwt');
 
 const getUsuarios = async (request, response) => {
+	// obtener el param de la paginacion, si no viene por default sera 0
+	const desde = Number(request.query.desde) || 0;
+
 	// obtener todos los usuarios de la base de datos
-	// las {} para especificar un filtro (aqui no hay filtro) y el segundo parametro para especificar que campos quiero traer
-	const usuarios = await Usuario.find({}, 'nombre email role google');
+	// las {} en el find es para especificar un filtro (aqui no hay filtro) y el segundo parametro para especificar que campos quiero traer
+	// skip omite los primeros n elementos del resultado. Por ejemplo, skip(10) empieza a mostrar desde el elemento número 11
+	// limit limita el número de elementos devueltos a n. Por ejemplo, limit(5) solo muestra 5 elementos
+	const [usuarios, totalRegistros] = await Promise.all([
+		Usuario
+			.find({}, 'nombre email role google img')
+			.skip(desde)
+			.limit(5),
+
+		Usuario.countDocuments()
+	]);
 
 	response.json({
 		ok: true,
 		usuarios,
-		uid: request.uid
+		totalRegistros
 	});
 };
 
@@ -116,7 +128,7 @@ const borrarUsuario = async (request, response) => {
 		}
 
 		// busca el usuario por id y lo elimina
-		await Usuario.findByIdAndDelete( uid );
+		await Usuario.findByIdAndDelete(uid);
 
 		response.json({
 			ok: true,
