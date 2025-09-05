@@ -10,6 +10,9 @@ const app = express();
 // configurar CORS (sirve para permitir que el servidor reciba peticiones desde otros dominios)
 app.use(cors());
 
+// carpeta publica
+app.use((express.static('public')));
+
 // lectura y parseo del body (sirve para leer los datos que se envian en el body de la peticion)
 app.use(express.json());
 

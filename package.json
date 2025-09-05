@@ -16,8 +16,10 @@
 		"express": "^5.1.0",
 		"express-fileupload": "^1.5.2",
 		"express-validator": "^7.2.1",
+		"google-auth-library": "^10.3.0",
 		"jsonwebtoken": "^9.0.2",
 		"mongoose": "^8.18.0",
+		"node-fetch": "^3.3.2",
 		"uuid": "^11.1.0"
 	}
 }
