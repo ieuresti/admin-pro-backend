@@ -1,4 +1,5 @@
 const Medico = require('../models/medicos');
+const Hospital = require('../models/hospital');
 const bcryptjs = require('bcryptjs');
 const jwt = require('../helpers/jwt');
 
@@ -39,17 +40,81 @@ const crearMedico = async (request, response) => {
 };
 
 const actualizarMedico = async (request, response) => {
-	response.json({
-		ok: true,
-		msg: 'actualizar medico'
-	});
+
+	const medicoId = request.params.id;
+	const userId = request.uid;
+	const hospitalId = request.body.hospital;
+
+	try {
+		const medicoDB = await Medico.findById(medicoId);
+
+		if (!medicoDB) {
+			return response.status(404).json({
+				ok: false,
+				msg: 'No existe un medico por ese id'
+			});
+		}
+
+		const hospitalDB = await Hospital.findById(hospitalId);
+
+		if (!hospitalDB) {
+			return response.status(404).json({
+				ok: false,
+				msg: 'No existe un hospital por ese id'
+			});
+		}
+
+		const cambiosMedico = {
+			...request.body,
+			usuario: userId,
+			hospital: hospitalId
+		};
+
+		// findByAndUpdate recibe 3 parametros: el id del registro a actualizar, un objeto con los campos a actualizar y un objeto con opciones (new:true para que retorne el registro actualizado)
+		const medicoActualizado = await Medico.findByIdAndUpdate(medicoId, cambiosMedico, { new: true });
+
+		response.json({
+			ok: true,
+			medico: medicoActualizado
+		});
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({
+			ok: false,
+			msg: 'Error inesperado... revisar logs'
+		});
+	}
 };
 
 const borrarMedico = async (request, response) => {
-	response.json({
-		ok: true,
-		msg: 'borrar medico'
-	});
+
+	medicoId = request.params.id;
+
+	try {
+		const medicoDB = await Medico.findById(medicoId);
+
+		if (!medicoDB) {
+			return response.status(404).json({
+				ok: false,
+				msg: 'No existe un medico por ese id'
+			});
+		}
+
+		// busca el medico por id y lo elimina
+		await Medico.findByIdAndDelete(medicoId);
+
+		response.json({
+			ok: true,
+			msg: 'Medico eliminado'
+
+		});
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({
+			ok: false,
+			msg: 'Error inesperado... revisar logs'
+		});
+	}
 }
 
 module.exports = { getMedicos, crearMedico, actualizarMedico, borrarMedico };

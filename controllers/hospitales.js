@@ -40,17 +40,70 @@ const crearHospital = async (request, response) => {
 };
 
 const actualizarHospital = async (request, response) => {
-	response.json({
-		ok: true,
-		msg: 'actualizar hosp'
-	});
+
+	const id = request.params.id;
+	const uid = request.uid; // uid del usuario
+
+	try {
+		const hospitalDB = await Hospital.findById(id);
+
+		if (!hospitalDB) {
+			return response.status(404).json({
+				ok: false,
+				msg: 'No existe un hospital por ese id'
+			});
+		}
+
+		const cambiosHospital = {
+			...request.body,
+			usuario: uid
+		};
+
+		// findByAndUpdate recibe 3 parametros: el id del registro a actualizar, un objeto con los campos a actualizar y un objeto con opciones (new:true para que retorne el registro actualizado)
+		const hospitalActualizado = await Hospital.findByIdAndUpdate(id, cambiosHospital, { new: true });
+
+		response.json({
+			ok: true,
+			hospital: hospitalActualizado
+		});
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({
+			ok: false,
+			msg: 'Error inesperado... revisar logs'
+		});
+	}
 };
 
 const borrarHospital = async (request, response) => {
-	response.json({
-		ok: true,
-		msg: 'borrar hosp'
-	});
+
+	const id = request.params.id;
+
+	try {
+		const hospitalDB = await Hospital.findById(id);
+
+		// validar si existe antes de eliminar hospital por ese id
+		if (!hospitalDB) {
+			return response.status(404).json({
+				ok: false,
+				msg: 'No existe un hospital por ese id'
+			});
+		}
+
+		// busca el hospital por id y lo elimina
+		await Hospital.findByIdAndDelete(id);
+
+		response.json({
+			ok: true,
+			msg: 'Hospital eliminado'
+		});
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({
+			ok: false,
+			msg: 'Error inesperado... revisar logs'
+		});
+	}
 }
 
 module.exports = { getHospitales, crearHospital, actualizarHospital, borrarHospital };
