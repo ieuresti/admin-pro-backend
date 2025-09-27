@@ -5,14 +5,43 @@ const jwt = require('../helpers/jwt');
 
 const getMedicos = async (request, response) => {
 	const medicos = await Medico.find()
-		.populate('usuario', 'nombre email')
-		.populate('hospital', 'nombre');
+		.populate('usuario', 'nombre img')
+		.populate('hospital', 'nombre img');
 
 	response.json({
 		ok: true,
 		medicos
 	});
 };
+
+const getMedicoById = async (request, response) => {
+
+	const medicoId = request.params.id;
+
+	try {
+		const medicoDB = await Medico.findById(medicoId)
+			.populate('usuario', 'nombre img')
+			.populate('hospital', 'nombre img');
+
+		if (!medicoDB) {
+			return response.status(404).json({
+				ok: false,
+				msg: 'No existe un medico por ese id'
+			});
+		}
+
+		response.json({
+			ok: true,
+			medico: medicoDB
+		});
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({
+			ok: false,
+			msg: 'Error inesperado... revisar logs'
+		});
+	}
+}
 
 const crearMedico = async (request, response) => {
 
@@ -117,4 +146,4 @@ const borrarMedico = async (request, response) => {
 	}
 }
 
-module.exports = { getMedicos, crearMedico, actualizarMedico, borrarMedico };
+module.exports = { getMedicos, getMedicoById, crearMedico, actualizarMedico, borrarMedico };
