@@ -34,7 +34,7 @@ app.use('/api/todo', require('./routes/busquedas'));
 app.use('/api/upload', require('./routes/uploads'));
 app.use('/api/login', require('./routes/auth'));
 
-// si no se cumple ninguna de las rutas anteriores, enviar el index.html (debe ir al final de todas las rutas)
-app.get('*', (request, response) => {
+// si no se cumple ninguna de las rutas anteriores, se enviará el index html (debe ir al final de todas las rutas)
+/* app.get('*', (request, response) => {
 	response.sendFile(path.resolve(__dirname, 'public/index.html'));
-})
+}) */
