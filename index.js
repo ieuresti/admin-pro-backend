@@ -1,6 +1,7 @@
 // importaciones en node
 const express = require('express');
 require('dotenv').config(); // importar variables de entorno
+const path = require('path'); // importar path
 const { dbConnection } = require('./database/config'); // importar la conexion a la base de datos
 const cors = require('cors'); // importar cors
 
@@ -32,3 +33,8 @@ app.use('/api/medicos', require('./routes/medicos'));
 app.use('/api/todo', require('./routes/busquedas'));
 app.use('/api/upload', require('./routes/uploads'));
 app.use('/api/login', require('./routes/auth'));
+
+// si no se cumple ninguna de las rutas anteriores, enviar el index.html (debe ir al final de todas las rutas)
+app.get('*', (request, response) => {
+	response.sendFile(path.resolve(__dirname, 'public/index.html'));
+})
