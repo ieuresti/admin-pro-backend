@@ -11,3 +11,10 @@ uploads/medicos/**.gif
 uploads/usuarios/**.jpg
 uploads/usuarios/**.png
 uploads/usuarios/**.gif
+
+# Ignore environment files with secrets
+.env
+.env.local
+.env.*
+
+.env.example
